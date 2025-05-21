@@ -33,7 +33,8 @@ class DirectoryBookmarksDemo extends StatefulWidget {
 class _DirectoryBookmarksDemoState extends State<DirectoryBookmarksDemo> {
   BookmarkData? _currentBookmark;
 
-  String? _currentPath = defaultTargetPlatform == TargetPlatform.macOS ? "/Volumes/Mac/Users/tomek/data/flutter-drive/build" : "/private/var/mobile/Containers/Data/Application/EEB80233-7F03-45D8-B857-40ED95FBC182/Documents"; // iOS
+  String? _currentPath = defaultTargetPlatform == TargetPlatform.macOS ? "/Volumes/Mac/Users/tomek/data/flutter-drive/build" :
+  "/private/var/mobile/Containers/Data/Application/EEB80233-7F03-45D8-B857-40ED95FBC182/Documents"; // iOS
 
   List<String> _files = [];
   bool _hasWritePermission = false;
@@ -91,6 +92,9 @@ class _DirectoryBookmarksDemoState extends State<DirectoryBookmarksDemo> {
       });
       await _checkPermissionAndLoadFiles();
       // await _loadFiles();
+    } else { // @TODO Only for testing purposes on iOS when bookmark isn't stored, but we somehow get
+      _currentPath = path;
+      await _checkPermissionAndLoadFiles();
     }
   }
 
