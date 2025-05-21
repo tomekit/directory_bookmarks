@@ -102,10 +102,12 @@ abstract class PlatformHandler {
   }
 
   /// Check write permission
-  static Future<bool> hasWritePermission() async {
+  static Future<bool> hasWritePermission(String path) async {
     _checkPlatformSupport();
     try {
-      final result = await _channel.invokeMethod('hasWritePermission');
+      final result = await _channel.invokeMethod('hasWritePermission', {
+        'path': path,
+      });
       return result ?? false;
     } on PlatformException catch (e) {
       throw _handlePlatformException(e);

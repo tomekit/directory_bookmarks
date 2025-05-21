@@ -147,8 +147,8 @@ class DirectoryBookmarkHandler: NSObject {
         }
     }
     
-    func hasWritePermission() -> Bool {
-        guard let url = currentAccessedURL ?? resolveBookmark(path: "bookmark") else {
+    func hasWritePermission(path: String) -> Bool {
+        guard let url = currentAccessedURL ?? resolveBookmark(path: path) else {
             return false
         }
         

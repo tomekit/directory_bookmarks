@@ -33,8 +33,7 @@ class DirectoryBookmarksDemo extends StatefulWidget {
 class _DirectoryBookmarksDemoState extends State<DirectoryBookmarksDemo> {
   BookmarkData? _currentBookmark;
 
-  // String? _currentPath = "/Volumes/Mac/Users/tomek/data/flutter-drive/build"; // macOS
-  String? _currentPath = "/private/var/mobile/Containers/Data/Application/45A0910B-2190-4B48-8193-F9CA69A74195/Documents"; // iOS
+  String? _currentPath = defaultTargetPlatform == TargetPlatform.macOS ? "/Volumes/Mac/Users/tomek/data/flutter-drive/build" : "/private/var/mobile/Containers/Data/Application/EEB80233-7F03-45D8-B857-40ED95FBC182/Documents"; // iOS
 
   List<String> _files = [];
   bool _hasWritePermission = false;
@@ -90,14 +89,14 @@ class _DirectoryBookmarksDemoState extends State<DirectoryBookmarksDemo> {
         _currentPath = path;
         _errorMessage = null;
       });
-      // await _checkPermissionAndLoadFiles();
-      await _loadFiles();
+      await _checkPermissionAndLoadFiles();
+      // await _loadFiles();
     }
   }
 
   Future<void> _checkPermissionAndLoadFiles() async {
     try {
-      final hasPermission = await DirectoryBookmarkHandler.hasWritePermission();
+      final hasPermission = await DirectoryBookmarkHandler.hasWritePermission(_currentPath!);
       setState(() {
         _hasWritePermission = hasPermission;
         _errorMessage = null;
@@ -146,8 +145,7 @@ class _DirectoryBookmarksDemoState extends State<DirectoryBookmarksDemo> {
         // User canceled the picker
         return;
       }
-      // macOS: /Volumes/Mac/Users/tomek/data/flutter-drive/build
-      // iOS: /private/var/mobile/Containers/Data/Application/45A0910B-2190-4B48-8193-F9CA69A74195/Documents
+
       final success = await DirectoryBookmarkHandler.saveBookmark(
         path,
         metadata: {'lastAccessed': DateTime.now().toIso8601String()},

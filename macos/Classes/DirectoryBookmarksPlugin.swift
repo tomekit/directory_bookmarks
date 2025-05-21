@@ -130,11 +130,20 @@ public class DirectoryBookmarksPlugin: NSObject, FlutterPlugin {
             }
             
         case "hasWritePermission":
-            result(bookmarkHandler.hasWritePermission())
-            
+            guard let args = call.arguments as? [String: Any],
+                  let path = args["path"] as? String else {
+                    result(FlutterError(
+                        code: "INVALID_ARGUMENTS",
+                        message: "Invalid arguments for saveDirectoryBookmark",
+                        details: "Required arguments: path (String)"
+                ))
+                return
+            }
+            result(bookmarkHandler.hasWritePermission(path: path))
+
         case "requestWritePermission":
-            result(bookmarkHandler.hasWritePermission())
-            
+            result(bookmarkHandler.hasWritePermission(path: "bookmark"))
+
         default:
             result(FlutterMethodNotImplemented)
         }

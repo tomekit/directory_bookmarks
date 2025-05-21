@@ -20,7 +20,7 @@ class DirectoryBookmarkHandler {
 
   /// Save file to the bookmarked directory
   static Future<bool> saveFile(String fileName, List<int> data) async {
-    if (!await PlatformHandler.hasWritePermission()) {
+    if (!await PlatformHandler.hasWritePermission("bookmark")) {
       final hasPermission = await PlatformHandler.requestWritePermission();
       if (!hasPermission) {
         throw PermissionDeniedException('Write permission denied');
@@ -65,8 +65,8 @@ class DirectoryBookmarkHandler {
   }
 
   /// Check if we have write permission
-  static Future<bool> hasWritePermission() async {
-    return PlatformHandler.hasWritePermission();
+  static Future<bool> hasWritePermission(String path) async {
+    return PlatformHandler.hasWritePermission(path);
   }
 
   /// Request write permission
