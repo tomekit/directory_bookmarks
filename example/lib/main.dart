@@ -71,7 +71,10 @@ class _DirectoryBookmarksDemoState extends State<DirectoryBookmarksDemo> {
     }
 
     try {
-      await _loadBookmark();
+      final initialPath = _currentPath;
+      if (initialPath != null) {
+        await _loadBookmark(initialPath);
+      }
     } catch (e) {
       setState(() {
         _errorMessage = 'Error: $e';
@@ -79,14 +82,16 @@ class _DirectoryBookmarksDemoState extends State<DirectoryBookmarksDemo> {
     }
   }
 
-  Future<void> _loadBookmark() async {
-    final bookmark = await DirectoryBookmarkHandler.resolveBookmark(_currentPath!);
+  Future<void> _loadBookmark(String path) async {
+    final bookmark = await DirectoryBookmarkHandler.resolveBookmark(path);
     if (bookmark != null) {
       setState(() {
         _currentBookmark = bookmark;
+        _currentPath = path;
         _errorMessage = null;
       });
-      await _checkPermissionAndLoadFiles();
+      // await _checkPermissionAndLoadFiles();
+      await _loadFiles();
     }
   }
 
@@ -109,7 +114,7 @@ class _DirectoryBookmarksDemoState extends State<DirectoryBookmarksDemo> {
 
   Future<void> _loadFiles() async {
     try {
-      final files = await DirectoryBookmarkHandler.listFiles();
+      final files = await DirectoryBookmarkHandler.listFiles(_currentPath!);
       if (files != null) {
         setState(() {
           _files = files;
@@ -154,7 +159,8 @@ class _DirectoryBookmarksDemoState extends State<DirectoryBookmarksDemo> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Directory bookmarked successfully')),
         );
-        await _loadBookmark();
+        await _loadBookmark(path);
+
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to bookmark directory')),

@@ -60,8 +60,8 @@ class DirectoryBookmarkHandler {
   }
 
   /// List all files in the bookmarked directory
-  static Future<List<String>?> listFiles() async {
-    return PlatformHandler.listFiles();
+  static Future<List<String>?> listFiles(String path) async {
+    return PlatformHandler.listFiles(path);
   }
 
   /// Check if we have write permission

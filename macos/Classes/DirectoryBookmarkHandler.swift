@@ -125,8 +125,8 @@ class DirectoryBookmarkHandler: NSObject {
         }
     }
     
-    func listFiles() -> [String]? {
-        guard let url = currentAccessedURL ?? resolveBookmark(path: "bookmark") else {
+    func listFiles(path: String) -> [String]? {
+        guard let url = currentAccessedURL ?? resolveBookmark(path: path) else {
             print("No valid bookmark found")
             return nil
         }

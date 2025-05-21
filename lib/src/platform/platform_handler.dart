@@ -89,10 +89,12 @@ abstract class PlatformHandler {
   }
 
   /// List files in bookmarked directory
-  static Future<List<String>?> listFiles() async {
+  static Future<List<String>?> listFiles(String path) async {
     _checkPlatformSupport();
     try {
-      final result = await _channel.invokeMethod('listFiles');
+      final result = await _channel.invokeMethod('listFiles', {
+        'path': path,
+      });
       return result != null ? List<String>.from(result) : null;
     } on PlatformException catch (e) {
       throw _handlePlatformException(e);

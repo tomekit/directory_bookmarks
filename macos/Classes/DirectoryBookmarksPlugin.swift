@@ -11,7 +11,7 @@ private extension Date {
 
 public class DirectoryBookmarksPlugin: NSObject, FlutterPlugin {
     private let bookmarkHandler = DirectoryBookmarkHandler.shared
-    
+
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(
             name: "com.example.directory_bookmarks/bookmark",
@@ -19,7 +19,7 @@ public class DirectoryBookmarksPlugin: NSObject, FlutterPlugin {
         let instance = DirectoryBookmarksPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
-    
+
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch call.method {
         case "saveDirectoryBookmark":
@@ -32,7 +32,7 @@ public class DirectoryBookmarksPlugin: NSObject, FlutterPlugin {
                 ))
                 return
             }
-            
+
             let success = bookmarkHandler.saveDirectoryBookmark(path: path)
             if success {
                 result(true)
@@ -43,7 +43,7 @@ public class DirectoryBookmarksPlugin: NSObject, FlutterPlugin {
                     details: "Could not create security-scoped bookmark for path: \(path)"
                 ))
             }
-            
+
         case "resolveDirectoryBookmark":
             guard let args = call.arguments as? [String: Any],
                   let path = args["path"] as? String else {
@@ -54,7 +54,7 @@ public class DirectoryBookmarksPlugin: NSObject, FlutterPlugin {
                 ))
                 return
             }
-            
+
             if let url = bookmarkHandler.resolveBookmark(path: path) {
                 result([
                     "path": url.path,
@@ -64,7 +64,7 @@ public class DirectoryBookmarksPlugin: NSObject, FlutterPlugin {
             } else {
                 result(nil)
             }
-            
+
         case "saveFile":
             guard let args = call.arguments as? [String: Any],
                   let fileName = args["fileName"] as? String,
@@ -76,7 +76,7 @@ public class DirectoryBookmarksPlugin: NSObject, FlutterPlugin {
                 ))
                 return
             }
-            
+
             let success = bookmarkHandler.saveFile(fileName: fileName, data: data)
             if success {
                 result(true)
@@ -87,7 +87,7 @@ public class DirectoryBookmarksPlugin: NSObject, FlutterPlugin {
                     details: "Could not write file: \(fileName)"
                 ))
             }
-            
+
         case "readFile":
             guard let args = call.arguments as? [String: Any],
                   let fileName = args["fileName"] as? String else {
@@ -98,7 +98,7 @@ public class DirectoryBookmarksPlugin: NSObject, FlutterPlugin {
                 ))
                 return
             }
-            
+
             if let data = bookmarkHandler.readFile(fileName: fileName) {
                 result(data)
             } else {
@@ -108,9 +108,18 @@ public class DirectoryBookmarksPlugin: NSObject, FlutterPlugin {
                     details: "Could not read file: \(fileName)"
                 ))
             }
-            
+
         case "listFiles":
-            if let files = bookmarkHandler.listFiles() {
+            guard let args = call.arguments as? [String: Any],
+                  let path = args["path"] as? String else {
+                    result(FlutterError(
+                        code: "INVALID_ARGUMENTS",
+                        message: "Invalid arguments for saveDirectoryBookmark",
+                        details: "Required arguments: path (String)"
+                ))
+                return
+            }
+            if let files = bookmarkHandler.listFiles(path: path) {
                 result(files)
             } else {
                 result(FlutterError(

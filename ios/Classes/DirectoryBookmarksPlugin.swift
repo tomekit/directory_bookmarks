@@ -111,7 +111,16 @@ public class DirectoryBookmarksPlugin: NSObject, FlutterPlugin {
             }
             
         case "listFiles":
-            if let files = bookmarkHandler.listFiles() {
+            guard let args = call.arguments as? [String: Any],
+                  let path = args["path"] as? String else {
+                    result(FlutterError(
+                        code: "INVALID_ARGUMENTS",
+                        message: "Invalid arguments for saveDirectoryBookmark",
+                        details: "Required arguments: path (String)"
+                ))
+                return
+            }
+            if let files = bookmarkHandler.listFiles(path: path) {
                 result(files)
             } else {
                 result(FlutterError(
