@@ -19,7 +19,7 @@ abstract class PlatformHandler {
 
   /// Check if the current platform is supported
   static bool get _isPlatformSupported {
-    return defaultTargetPlatform == TargetPlatform.macOS ||
+    return defaultTargetPlatform == TargetPlatform.macOS || defaultTargetPlatform == TargetPlatform.iOS ||
         defaultTargetPlatform == TargetPlatform.android;
   }
 
