@@ -1,8 +1,5 @@
+library directory_bookmarks;
 
-import 'directory_bookmarks_platform_interface.dart';
-
-class DirectoryBookmarks {
-  Future<String?> getPlatformVersion() {
-    return DirectoryBookmarksPlatform.instance.getPlatformVersion();
-  }
-}
+export 'src/directory_bookmark_handler.dart';
+export 'src/models/bookmark_data.dart';
+export 'src/platform/platform_handler.dart';
