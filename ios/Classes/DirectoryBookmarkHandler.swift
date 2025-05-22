@@ -28,13 +28,25 @@ class DirectoryBookmarkHandler: NSObject {
         }
         
         do {
+
+            guard url.startAccessingSecurityScopedResource() else {
+               print("Failed to save bookmark: Cannot access security-scoped resource")
+               return false
+            }
+
+           defer { url.stopAccessingSecurityScopedResource() }
+
+
             // Create security-scoped bookmark
             let bookmarkData = try url.bookmarkData(
-                options: [.minimalBookmark], // https://stackoverflow.com/a/77392449/29744315
+                options: [.minimalBookmark], // https://developer.apple.com/documentation/uikit/providing-access-to-directories#Save-the-URL-as-a-bookmark
                 includingResourceValuesForKeys: nil,
                 relativeTo: nil
             )
             
+//            let saveUrl = URL(string: path)
+//            try bookmarkData.write(to: saveUrl!)
+
             // Save bookmark data
             UserDefaults.standard.set(bookmarkData, forKey: path)
             return true
@@ -46,7 +58,7 @@ class DirectoryBookmarkHandler: NSObject {
     
     func resolveBookmark(path: String) -> URL? {
         // Stop accessing previous URL if any
-        stopAccessingCurrentURL()
+//        stopAccessingCurrentURL()
         
         guard let bookmarkData = UserDefaults.standard.data(forKey: path) else {
             print("No bookmark data found")
@@ -54,6 +66,8 @@ class DirectoryBookmarkHandler: NSObject {
         }
         
         do {
+//            let saveUrl = URL(string: path)
+//            let bookmarkData = try Data(contentsOf: saveUrl!)
             var isStale = false
             let url = try URL(
                 resolvingBookmarkData: bookmarkData,
@@ -62,28 +76,28 @@ class DirectoryBookmarkHandler: NSObject {
                 bookmarkDataIsStale: &isStale
             )
             
-            // Start accessing the security-scoped resource
-            if !url.startAccessingSecurityScopedResource() {
-                print("Failed to start accessing security-scoped resource")
-                return nil
-            }
-            
-            // Store the current accessed URL
-            currentAccessedURL = url
+//            // Start accessing the security-scoped resource
+//            if !url.startAccessingSecurityScopedResource() {
+//                print("Failed to start accessing security-scoped resource")
+//                return nil
+//            }
+//
+//            // Store the current accessed URL
+//            currentAccessedURL = url
             
             // Verify the URL still exists and is a directory
             guard url.isDirectory else {
                 print("Bookmarked path no longer exists or is not a directory")
-                stopAccessingCurrentURL()
+//                stopAccessingCurrentURL()
                 return nil
             }
             
             if isStale {
                 print("Bookmark is stale, attempting to recreate")
-                if saveDirectoryBookmark(path: url.path) {
+                if saveDirectoryBookmark(path: path) {
                     return url
                 }
-                stopAccessingCurrentURL()
+//                stopAccessingCurrentURL()
                 return nil
             }
             
